@@ -1,20 +1,5 @@
 import random
 
-payouts = {
-    "Natural Royal Flush": 800,
-    "Four Deuces": 200,
-    "Wild Royal Flush": 25,
-    "Five of a Kind": 15,
-    "Straight Flush": 9,
-    "Four of a Kind": 5,
-    "Full House": 3,
-    "Flush": 2,
-    "Straight": 2,
-    "Three of a Kind": 1,
-    "No Win": 0
-
-}
-
 class Card:
     def __init__(self,suit, value):
         self.suit = suit
@@ -67,37 +52,26 @@ class Player:
     def check(self):
         if(self.natural_royal_flush()):
             print("Natural Royal Flush")
-            return payouts["Natural Royal Flush"]
         elif(self.four_deuces()):
             print("Four Deuces")
-            return payouts["Four Deuces"]
         elif(self.wild_royal_flush()):
             print("Wild Royal Flush")
-            return payouts["Wild Royal Flush"]
         elif(self.five_of_a_kind()):
             print("Five of a Kind")
-            return payouts["Five of a Kind"]
         elif(self.straight_flush()):
             print("Straight Flush")
-            return payouts["Straight Flush"]
         elif(self.four_of_a_kind()):
             print("Four of a Kind")
-            return payouts["Four of a Kind"]
         elif(self.full_house()):
             print("Full House")
-            return payouts["Full House"]
         elif(self.flush()):
             print("Flush")  
-            return payouts["Flush"]
         elif(self.straight()):
-            print("Straight")
-            return payouts["Straight"]
+            print("Straight")   
         elif(self.three_of_a_kind()):
             print("Three of a Kind")
-            return payouts["Three of a Kind"]
         else:
             print("No Win")
-            return payouts["No Win"]
 
         
 
@@ -282,77 +256,42 @@ class Player:
             hand_copy.append(card)
         # sort
         hand_copy.sort(key=lambda x: x.value)
-        # count num 2s
-        num_2s = 0
-        for card in self.hand:
-            if card.value == 2:
-                num_2s += 1
-        # check if there are only 1s in the array other than 2s
-        cards = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-
-        for card in hand_copy:
-            cards[card.value-1] += 1
-
-        print(cards)
 
         
-        for i in range(0, len(cards)):
-            if cards[i] > 1 and i != 1:
+        #specifically check hands with aces
+        if(hand_copy[0] == 1 and hand_copy[1] == 2 and (hand_copy[2] == 3  or hand_copy[2] == 2) and (hand_copy[3] == 4 or hand_copy[3] == 2) and (hand_copy[4] == 5 or hand_copy[4] == 2)):
+           return True
+
+        if(hand_copy[0] == 1 and (hand_copy[1] == 10 or hand_copy[1] == 2) and (hand_copy[2] == 11 or hand_copy[2] == 2) and (hand_copy[3] == 12 or hand_copy[3] == 2) and (hand_copy[4] == 13 or hand_copy[4] == 2)):
+            return True
+        
+        
+        for i in range(0, len(hand_copy)-1):
+            if hand_copy[i].value != 2 and hand_copy[i+1].value-1 != hand_copy[i].value:
                 return False
             
 
-        
-
-        # if there are 0 2s, check for 5 1s in a row
-        if cards[1] == 0:
-            for i in range(0, 9):
-                if cards[i] == 1 and cards[i+1] == 1 and cards[i+2] == 1 and cards[i+3] == 1 and cards[i+4] == 1:
-                
-                    return True
-            # check for 10 J Q K A
-            if cards[0] == 1 and cards[9] == 1 and cards[10] == 1 and cards[11] == 1 and cards[12] == 1:
-                return True
-            
-        
-        # if there is one 2, check for 4 1s in a group of 5
-        elif cards[1] == 1:
-            print("going into 1 2")
-            cards[1] = 0
-            for i in range(0, 9):
-                if cards[i] + cards[i+1] + cards[i+2] + cards[i+3] + cards[i+4] == 4:
-                    return True
-            # check for 10 J Q K A
-            if cards[0] + cards[9] + cards[10] + cards[11] + cards[12] == 4:
-                return True
-        #if there is two 2s, check for 3 1s in a group of 5
-        elif cards[1] == 2:
-            cards[1] = 0
-            for i in range(0, 9):
-                if cards[i] + cards[i+1] + cards[i+2] + cards[i+3] + cards[i+4] == 3:
-                    return True
-            # check for 10 J Q K A
-            if cards[0] + cards[9] + cards[10] + cards[11] + cards[12] == 3:
-                return True
-
-        return False
+        return True
         
     def four_of_a_kind(self):
         num_2s = 0
         # check if there is a 2 in the hand
         # count number of 2s in the hand
         
-
-
-        cards = [0,0,0,0,0,0,0,0,0,0,0,0,0]
         for card in self.hand:
-            cards[card.value-1] += 1
+            if card.value == 2:
+                num_2s += 1
 
-        num_2s = cards[1]
-        cards[1] = 0
-        for i in range(0, len(cards)):
-            if cards[i] + num_2s == 4:
-                return True    
+        #check if four of a kind
+        for i in range(1, 14):
+            # count amount of cards with value i
+            count = 0
+            for card in self.hand:
+                if card.value == i:
+                    count += 1
+            if count + num_2s >= 4:
+                return True
+        return False
 
 
     def full_house(self):
@@ -379,51 +318,24 @@ class Player:
         hand_copy.sort(key=lambda x: x.value)
         num2s = 0
         for card in hand_copy:
-            cards[card.value] += 1
+            if card.value == 2:
+                num2s += 1
+            else:
+                cards[card.value] += 1
 
-
-        num2s = cards[2]
         three_of_a_kind = False
         pair = False
-
-        if num2s == 0:
-            for i in range(1,14):
-                if cards[i] == 3:
-                    three_of_a_kind = True
-                if cards[i] == 2:
-                    pair = True
-
-            if three_of_a_kind and pair:
-                return True
-
-        elif num2s == 1:
-            cards[2] = 0
-
-            # look for 3 of a kind
-            for i in range(1,14):
-                if cards[i] == 3:
-                    return True
-
-            # look for 2 pairs
-            num_pairs = 0
-            for i in range(1,14):
-                if cards[i] == 2:
-                    num_pairs += 1
-            if num_pairs == 2:
-                return True
-
-        elif num2s == 2:
-            # look for 3 of a kind
-            cards[2] = 0
-            for i in range(1,14):
-                if cards[i] == 3:
-                    return True
-            # look for a pair
-            for i in range(1,14):
-                if cards[i] == 2:
-                    return True
+        for i in range(1,14):
+            if cards[i] + num2s >= 3:
+                three_of_a_kind = True
+                num2s -= 3 - cards[i]
+                cards[i] = 0
+                break
         
-                    
-    
+        if(three_of_a_kind):
+            for i in range(1,14):
+                if cards[i] + num2s >= 2:
+                    pair = True
+                    break
 
-        return False
+        return (pair and three_of_a_kind)
