@@ -1,4 +1,6 @@
+import os
 import random
+import pygame
 
 payouts = {
     "Natural Royal Flush": 800,
@@ -19,9 +21,18 @@ class Card:
     def __init__(self,suit, value):
         self.suit = suit
         self.value = value
+        self.string = (str(value) + "_of_" + suit + ".svg").lower()
+        self.image = pygame.image.load(os.path.join('card_images', self.string))
+        self.hold = False
 
     def show(self):
         print(f"{self.value} of {self.suit}")
+
+    def toggle_hold(self):
+        self.hold = not self.hold
+        print("hold: " + str(self.hold))
+        
+        
 
 
 class Deck:
@@ -58,6 +69,14 @@ class Player:
     def build(self, deck):
         for i in range(5):
             self.draw(deck)
+
+    def getDeck(self):
+        return self.hand
+    
+    def reroll(self, deck):
+        for card in self.hand:
+            if not card.hold:
+                card = deck.draw()
 
 
     def show(self):

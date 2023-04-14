@@ -32,23 +32,114 @@ def main():
     }
     # credits = 25
 
-    Player1 = Player("Player1")
-    Player1.hand = decks["random_hand"]
+    # Player1 = Player("Player1")
+    # Player1.hand = decks["random_hand"]
 
-    # Player1.show()
-    print()
-    print("You have ", Player1.check(), " credits")
+    # # Player1.show()
+    # print()
+    # print("You have ", Player1.check(), " credits")
+    play(10)
 
     # credits = play(credits)
 
-    
+# pygame
+
+pygame.init()
+width = 1440
+height = 810
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Video Poker Dueces Wild")
+
+# colors
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+orange = (255, 165, 0)
+
+# fonts
+font = pygame.font.SysFont("didot", 24)
+
+# draw buttons
+def draw_button(screen, color, x, y, width, height, text):
+    pygame.draw.rect(screen, color, (x, y, width, height))
+    text = font.render(text, True, black)
+    screen.blit(text, (x + (width/2 - text.get_width()/2), y + (height/2 - text.get_height()/2)))
+
+
+def draw_cards(screen, hand):
+    # draw cards
+
+    # dont touch the width values this shit took forever
+    pygame.Surface.blit(screen, hand[0].image, (248- 140, 100))
+    pygame.Surface.blit(screen, hand[1].image, (248 * 2- 140, 100))
+    pygame.Surface.blit(screen, hand[2].image, (248 * 3- 140, 100))
+    pygame.Surface.blit(screen, hand[3].image, (248 * 4- 140, 100))
+    pygame.Surface.blit(screen, hand[4].image, (248 * 5- 140, 100))
+
+def draw_buttons(screen, hand):
+    draw_button(screen, green if hand[0].hold else white, 280 - 140 + 30, 500, 100, 50, "HOLD")
+    draw_button(screen, green if hand[1].hold else white, 280 * 2 - 140, 500, 100, 50, "HOLD")
+    draw_button(screen, green if hand[2].hold else white, 280 * 3 - 140 - 30, 500, 100, 50, "HOLD")
+    draw_button(screen, green if hand[3].hold else white, 280 * 4 - 140 - 60, 500, 100, 50, "HOLD")
+    draw_button(screen, green if hand[4].hold else white, 280 * 5 - 140 - 90, 500, 100, 50, "HOLD")
+
+
 def play(num_creds):
+
 
 
     deck = Deck()
     player1 = Player("Player1")
+    player1.build(deck)
 
     playing = True
+
+    # setup screen
+
+        
+    while True:
+
+        curDeck = player1.getDeck()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            # check button clicks
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                # check if mouse position is over the button
+                if 280 - 140 + 30 < mouse_pos[0] < 280 - 140 + 30 + 100 and 500 < mouse_pos[1] < 500 + 50:
+                    print("button 1 clicked")
+                    curDeck[0].toggle_hold()
+                if 280 * 2 - 140 < mouse_pos[0] < 280 * 2 - 140 + 100 and 500 < mouse_pos[1] < 500 + 50:
+                    print("button 2 clicked")
+                    curDeck[1].toggle_hold()
+
+                if 280 * 3 - 140 - 30 < mouse_pos[0] < 280 * 3 - 140 - 30 + 100 and 500 < mouse_pos[1] < 500 + 50:
+                    print("button 3 clicked")
+                    curDeck[2].toggle_hold()
+                if 280 * 4 - 140 - 60 < mouse_pos[0] < 280 * 4 - 140 - 60 + 100 and 500 < mouse_pos[1] < 500 + 50:
+                    print("button 4 clicked")
+                    curDeck[3].toggle_hold()
+                if 280 * 5 - 140 - 90 < mouse_pos[0] < 280 * 5 - 140 - 90 + 100 and 500 < mouse_pos[1] < 500 + 50:
+                    print("button 5 clicked")
+                    curDeck[4].toggle_hold()
+
+        screen.fill(black)
+
+        # test card drawings
+        draw_cards(screen, player1.hand)
+        draw_buttons(screen, player1.hand)
+        pygame.display.update()
+
+        pygame.display.update()
+
+    
+
 
     while playing:
         print()
